@@ -1,0 +1,22 @@
+{
+  "name": "nxlib/mvc",
+  "description": "nxlib-mvc",
+  "keywords": ["php-mvc"],
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Garming Lau",
+      "email": "garming@msn.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.0.0"
+  },
+  "minimum-stability": "dev",
+  "autoload": {
+    "psr-4": {
+      "NxLib\\Core\\": "src/"
+    }
+  }
+}

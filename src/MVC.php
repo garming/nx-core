@@ -24,7 +24,7 @@ class MVC
             if (
                 strpos($class, 'Controller\\') === 0
                 || strpos($class, 'Model\\') === 0
-                || strpos($class, 'Conf\\') === 0
+                || strpos($class, 'Config\\') === 0
                 || strpos($class, 'Plugin\\') === 0
                 || strpos($class, 'Lib\\') === 0
             ) {

@@ -2,3 +2,7 @@
 .idea
 vendor
 composer.lock
+restful.api.example.com
+web.example.com
+common
+composer

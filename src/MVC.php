@@ -30,16 +30,16 @@ class MVC
             ) {
 
                 $file = str_replace('\\', DIRECTORY_SEPARATOR, $class);
-                $name = strrchr($file, DIRECTORY_SEPARATOR) . '.php';
-                include CURRENT_APP_PATH . DIRECTORY_SEPARATOR . strtolower(dirname($file)) . $name;
+                $name = ucfirst(trim(strrchr($file, DIRECTORY_SEPARATOR), DIRECTORY_SEPARATOR)) . '.php';
+                include CURRENT_APP_PATH . DIRECTORY_SEPARATOR . strtolower(dirname($file)) . DIRECTORY_SEPARATOR . $name;
             }
             if (
                 strpos($class, 'Common\\') === 0
 
             ) {
                 $file = str_replace('\\', DIRECTORY_SEPARATOR, $class);
-                $name = strrchr($file, DIRECTORY_SEPARATOR) . '.php';
-                include $current_nx_root . DIRECTORY_SEPARATOR . strtolower(dirname($file)) . $name;
+                $name = ucfirst(trim(strrchr($file, DIRECTORY_SEPARATOR), DIRECTORY_SEPARATOR)) . '.php';
+                include $current_nx_root . DIRECTORY_SEPARATOR . strtolower(dirname($file)) . DIRECTORY_SEPARATOR . $name;
             }
         }, true, true);
     }

@@ -19,8 +19,16 @@ class Dispatch
 
     public static function run(array $router = [])
     {
+        $uri = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
+        if(isset($router[$_SERVER['REQUEST_METHOD']][$uri])){
+            $router = $router[$_SERVER['REQUEST_METHOD']][$uri];
+            $class = $router['namespace'].'\\'.$router['class'];
+            $action = $router['function'];
+            call_user_func([(new $class),strtolower($action)]);
+            return;
+        }
+        $uri = explode("/",$uri);
         self::$request_method = $_SERVER['REQUEST_METHOD'];
-        $uri = explode("/",explode('?',$_SERVER['REQUEST_URI'])[0]);
         self::$controller = (isset($uri[1]) && !empty($uri[1])) ? $uri[1] : 'Index';
         self::$action     = (isset($uri[2]) && !empty($uri[2])) ? $uri[2] : 'index';
         $controller = '\\Controller\\'.self::$controller;

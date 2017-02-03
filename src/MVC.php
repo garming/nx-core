@@ -11,9 +11,10 @@ namespace NxLib\Core;
 
 class MVC
 {
-    public static function init(string $app_path)
+    public static function init(string $app_path,$autoLoadMap = [])
     {
         define("CURRENT_APP_PATH", $app_path);
+        define("CURRENT_AUTOLOAD_MAP", $autoLoadMap);
         static::autoLoader();
     }
 
@@ -40,6 +41,24 @@ class MVC
                 $file = str_replace('\\', DIRECTORY_SEPARATOR, $class);
                 $name = ucfirst(trim(strrchr($file, DIRECTORY_SEPARATOR), DIRECTORY_SEPARATOR)) . '.php';
                 include $current_nx_root . DIRECTORY_SEPARATOR . strtolower(dirname($file)) . DIRECTORY_SEPARATOR . $name;
+            }
+
+            if(!empty(CURRENT_AUTOLOAD_MAP)){
+                foreach (CURRENT_AUTOLOAD_MAP as $namespace => $paths){
+                    if(strpos($class, $namespace) === 0){
+                        $file_path = str_replace($namespace,"",$class);
+                        $name = explode("\\",$class);
+                        $name = end($name);
+                        $file_path = str_replace($name,"",$file_path);
+                        $file_path = str_replace("\\",DIRECTORY_SEPARATOR,$file_path);
+                        foreach ($paths as $path){
+                            $file = $current_nx_root.DIRECTORY_SEPARATOR.strtolower($path.DIRECTORY_SEPARATOR.$file_path).$name.'.php';
+                            include $file;
+                            break;
+                        }
+                        break;
+                    }
+                }
             }
         }, true, true);
     }

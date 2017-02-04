@@ -17,8 +17,11 @@ class Dispatch
     private function __clone(){}
     private function __construct(){}
 
-    public static function run(array $router = [])
+    public static function run(array $router = [],array $inspector = [])
     {
+        if(!empty($inspector)){
+            call_user_func($inspector);
+        }
         $uri = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
         if(isset($router[$_SERVER['REQUEST_METHOD']][$uri])){
             $router = $router[$_SERVER['REQUEST_METHOD']][$uri];

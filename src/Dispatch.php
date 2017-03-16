@@ -17,15 +17,18 @@ class Dispatch
     private function __clone(){}
     private function __construct(){}
 
-    public static function run(array $router = [],array $inspector = [])
+    public static function run(array $router = [],array $inspectors = [])
     {
-        if(!empty($inspector)){
-            call_user_func($inspector);
+        if(!empty($inspectors) && is_array($inspectors)){
+            foreach ($inspectors as $inspector){
+                call_user_func($inspector);
+            }
         }
         $uri = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
-        if(isset($router[$_SERVER['REQUEST_METHOD']][$uri])){
-            $router = $router[$_SERVER['REQUEST_METHOD']][$uri];
-            $class = $router['namespace'].'\\'.$router['class'];
+        $requestMethod = strtoupper($_SERVER['REQUEST_METHOD']);
+        if(isset($router[$requestMethod."#".$uri])){
+            $router = $router[$requestMethod."#".$uri];
+            $class = $router['class'];
             $action = $router['function'];
             call_user_func([(new $class),strtolower($action)]);
             return;

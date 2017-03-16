@@ -19,7 +19,7 @@ class Controller
     {
     }
 
-    public function sendJsonResponse($data, $status_code = 200)
+    protected function sendJsonResponse($data, $status_code = 200)
     {
         http_response_code($status_code);
         header('Content-type: application/json; charset=utf-8');
@@ -27,7 +27,7 @@ class Controller
         exit;
     }
 
-    public function getParam($key, $default = '', $msg = '')
+    protected function getParam($key, $default = '', $msg = '')
     {
         if (isset($_GET[$key])) {
             return $this->typeResult($_GET[$key],$default);
@@ -36,7 +36,7 @@ class Controller
         return $default;
     }
 
-    public function postParam($key, $default = '', $msg = '')
+    protected function postParam($key, $default = '', $msg = '')
     {
         if (isset($_POST[$key])) {
             return $this->typeResult($_POST[$key],$default);
@@ -45,7 +45,7 @@ class Controller
         return $default;
     }
 
-    public function putParam($key, $default = '', $msg = '')
+    protected function putParam($key, $default = '', $msg = '')
     {
         if(is_null($this->rawParams)){
             $raw_data = file_get_contents('php://input', 'r');
@@ -65,12 +65,12 @@ class Controller
         return $default;
     }
 
-    public function deleteParam($key, $default = '', $msg = '')
+    protected function deleteParam($key, $default = '', $msg = '')
     {
         return $this->putParam($key,$default,$msg);
     }
 
-    public function params()
+    protected function params()
     {
         if (!is_null($this->allParams)) {
             return $this->allParams;
@@ -86,7 +86,7 @@ class Controller
         }
     }
 
-    public function param($key, $default = '', $msg = '')
+    protected function param($key, $default = '', $msg = '')
     {
         $params = $this->params();
         if (isset($params[$key])) {
@@ -96,7 +96,7 @@ class Controller
         return $default;
     }
 
-    public function header($key)
+    protected function header($key)
     {
         $key = 'http_' . $key;
         $key = str_replace('-', '_', $key);

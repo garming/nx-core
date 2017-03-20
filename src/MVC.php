@@ -43,8 +43,18 @@ class MVC
                 include $current_nx_root . DIRECTORY_SEPARATOR . strtolower(dirname($file)) . DIRECTORY_SEPARATOR . $name;
             }
             if(!empty(CURRENT_AUTOLOAD_MAP)){
-                foreach (CURRENT_AUTOLOAD_MAP as $namespace => $paths){
-                    if(strpos($class, $namespace) === 0){
+                $class_arr = explode("\\",$class);
+                $ns = "";
+                $namespace_arr = [];
+                foreach ($class_arr as $v){
+                    $ns .= $v.'\\';
+                    $namespace_arr[] = $ns;
+                }
+                krsort($namespace_arr);
+                $auto_load_map = CURRENT_AUTOLOAD_MAP;
+                foreach ($namespace_arr as $namespace){
+                    if(isset($auto_load_map[$namespace])){
+                        $paths = CURRENT_AUTOLOAD_MAP[$namespace];
                         $file_path = str_replace($namespace,"",$class);
                         $name = explode("\\",$class);
                         $name = end($name);
@@ -52,8 +62,10 @@ class MVC
                         $file_path = str_replace("\\",DIRECTORY_SEPARATOR,$file_path);
                         foreach ($paths as $path){
                             $file = $current_nx_root.DIRECTORY_SEPARATOR.strtolower($path.DIRECTORY_SEPARATOR.$file_path).$name.'.php';
-                            include $file;
-                            break;
+                            if(file_exists($file)){
+                                include $file;
+                                break;
+                            }
                         }
                         break;
                     }

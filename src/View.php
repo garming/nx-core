@@ -11,22 +11,14 @@ namespace NxLib\Core;
 
 class View
 {
-    private static $instance = null;
+    private static $dataSet = [];
 
-    private function __construct()
+    public function __construct($file)
     {
-        //further for more
+        echo $this->render($file);
+        exit;
     }
-    private function __clone(){}
 
-    public static function init()
-    {
-        if(!is_null(self::$instance)){
-            return self::$instance;
-        }
-        self::$instance = new self();
-        return self::$instance;
-    }
 
     /**
      * Set an array of values
@@ -35,25 +27,18 @@ class View
      * @param $value
      * @internal param array $array of values
      */
-    public function set($key,$value)
+    public static function set($key,$value)
     {
-        $this->$key = $value;
+        static::$dataSet[$key] = $value;
     }
 
-
-    public function display($file)
-    {
-        echo $this->render($file);
-        exit;
-    }
-
-    public function render($file)
+    public static function render($file)
     {
         $file = str_replace('/',DIRECTORY_SEPARATOR,$file);
         try {
             ob_start();
-            extract((array) $this);
-            require CURRENT_APP_PATH .DIRECTORY_SEPARATOR.'view'.DIRECTORY_SEPARATOR. $file . '.php';
+            extract(static::$dataSet);
+            require CURRENT_APP_PATH .DIRECTORY_SEPARATOR.MVC::getViewPath().DIRECTORY_SEPARATOR. $file . '.php';
             return ob_get_clean();
         }
         catch(\Exception $e)

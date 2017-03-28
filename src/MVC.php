@@ -24,7 +24,7 @@ class MVC
     {
         spl_autoload_register(function ($class) {
             if(!empty(CURRENT_VIEWS_PATH)){
-                $current_namespace = dirname($class)."\\";
+                $current_namespace = substr($class,0,strrpos($class,"\\")+1); 
                 $current_views_path = CURRENT_VIEWS_PATH;
                 if(isset($current_views_path[$current_namespace])){
                     static::$view_path = $current_views_path[$current_namespace];

@@ -26,12 +26,35 @@ class Dispatch
         }
         $uri = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
         $requestMethod = strtoupper($_SERVER['REQUEST_METHOD']);
-        if(isset($router[$requestMethod."#".$uri])){
-            $router = $router[$requestMethod."#".$uri];
+        $check_uri = $requestMethod."#".$uri;
+        if(isset($router[$check_uri])){
+            $router = $router[$check_uri];
             $class = $router['class'];
             $action = $router['function'];
             call_user_func([(new $class),strtolower($action)]);
             return;
+        }
+        if(!empty($router)){
+            foreach ($router as $path => $clazz){
+                $pos = strrpos($path,"/(");
+                if($pos !== false){
+                    $uri_begin = substr($path,0,$pos+1);
+                    if(strrpos($check_uri,$uri_begin) === 0){
+                        $pattern = str_replace($uri_begin,"",$path);
+                        $tmp_uri = str_replace($uri_begin,"",$check_uri);
+                        $last_pos = strrpos($pattern,")");
+                        $pattern = substr($pattern,1,$last_pos-1);
+                        $pattern = "/{$pattern}/";
+                        if(preg_match($pattern, $tmp_uri) === 1){
+                            $class = $clazz['class'];
+                            $action = $clazz['function'];
+                            call_user_func([(new $class),strtolower($action)]);
+                            return;
+                        }
+
+                    }
+                }
+            }
         }
         $uri = explode("/",$uri);
         self::$request_method = $_SERVER['REQUEST_METHOD'];

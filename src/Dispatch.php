@@ -24,7 +24,14 @@ class Dispatch
                 call_user_func($inspector);
             }
         }
-        $uri = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
+        if(isset($_SERVER['PATH_INFO'])){
+            $uri = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
+        }elseif(isset($_SERVER['REQUEST_URI'])){
+            $uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+            if(strpos($uri,'?') !== false){
+                $uri = mb_substr($uri,0,strpos($uri,'?'));
+            }
+        }
         $requestMethod = strtoupper($_SERVER['REQUEST_METHOD']);
         $check_uri = $requestMethod."#".$uri;
         if(isset($router[$check_uri])){

@@ -61,6 +61,23 @@ class Dispatch
 
                     }
                 }
+                if(strpos(strrev($path),"**/") === 0){
+                    $uri_begin = rtrim($path,"**");
+                    if(strrpos($check_uri,$uri_begin) === 0){
+                        $pattern = str_replace($uri_begin,"",$path);
+                        $tmp_uri = str_replace($uri_begin,"",$check_uri);
+                        $last_pos = strrpos($pattern,")");
+                        $pattern = substr($pattern,1,$last_pos-1);
+                        $pattern = "/{$pattern}/";
+                        if(preg_match($pattern, $tmp_uri) === 1){
+                            $class = $clazz['class'];
+                            $action = $clazz['function'];
+                            call_user_func([(new $class),strtolower($action)]);
+                            return;
+                        }
+
+                    }
+                }
             }
         }
         $uri = explode("/",$uri);

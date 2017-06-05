@@ -24,11 +24,12 @@ class MVC
     {
         spl_autoload_register(function ($class) {
             $filePath = function ($file){
-                $tmp = explode("\\",$file);
+                $delimiter = DIRECTORY_SEPARATOR;
+                $tmp = explode($delimiter,$file);
                 foreach ($tmp as &$v){
                     $v = lcfirst($v);
                 }
-                return implode("\\",$tmp);
+                return implode($delimiter,$tmp);
             };
             if(!empty(CURRENT_VIEWS_PATH)){
                 $current_namespace = substr($class,0,strrpos($class,"\\")+1);

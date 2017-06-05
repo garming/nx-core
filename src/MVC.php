@@ -24,7 +24,7 @@ class MVC
     {
         spl_autoload_register(function ($class) {
             if(!empty(CURRENT_VIEWS_PATH)){
-                $current_namespace = substr($class,0,strrpos($class,"\\")+1); 
+                $current_namespace = substr($class,0,strrpos($class,"\\")+1);
                 $current_views_path = CURRENT_VIEWS_PATH;
                 if(isset($current_views_path[$current_namespace])){
                     static::$view_path = $current_views_path[$current_namespace];
@@ -42,7 +42,14 @@ class MVC
 
                 $file = str_replace('\\', DIRECTORY_SEPARATOR, $class);
                 $name = ucfirst(trim(strrchr($file, DIRECTORY_SEPARATOR), DIRECTORY_SEPARATOR)) . '.php';
-                include $current_nx_root . DIRECTORY_SEPARATOR . strtolower(dirname($file)) . DIRECTORY_SEPARATOR . $name;
+                $file = function () use($file){
+                    $tmp = explode("\\",$file);
+                    foreach ($tmp as &$v){
+                        $v = lcfirst($v);
+                    }
+                    return implode("\\",$tmp);
+                };
+                include $current_nx_root . DIRECTORY_SEPARATOR . dirname($file()) . DIRECTORY_SEPARATOR . $name;
             }
             if (
                 strpos($class, 'Common\\') === 0

@@ -23,8 +23,16 @@ class MVC
     private static function autoLoader()
     {
         spl_autoload_register(function ($class) {
+            $filePath = function ($file){
+                $delimiter = DIRECTORY_SEPARATOR;
+                $tmp = explode($delimiter,$file);
+                foreach ($tmp as &$v){
+                    $v = lcfirst($v);
+                }
+                return implode($delimiter,$tmp);
+            };
             if(!empty(CURRENT_VIEWS_PATH)){
-                $current_namespace = substr($class,0,strrpos($class,"\\")+1); 
+                $current_namespace = substr($class,0,strrpos($class,"\\")+1);
                 $current_views_path = CURRENT_VIEWS_PATH;
                 if(isset($current_views_path[$current_namespace])){
                     static::$view_path = $current_views_path[$current_namespace];
@@ -42,7 +50,7 @@ class MVC
 
                 $file = str_replace('\\', DIRECTORY_SEPARATOR, $class);
                 $name = ucfirst(trim(strrchr($file, DIRECTORY_SEPARATOR), DIRECTORY_SEPARATOR)) . '.php';
-                include $current_nx_root . DIRECTORY_SEPARATOR . strtolower(dirname($file)) . DIRECTORY_SEPARATOR . $name;
+                include $current_nx_root . DIRECTORY_SEPARATOR . dirname($filePath($file)) . DIRECTORY_SEPARATOR . $name;
             }
             if (
                 strpos($class, 'Common\\') === 0
@@ -50,7 +58,7 @@ class MVC
             ) {
                 $file = str_replace('\\', DIRECTORY_SEPARATOR, $class);
                 $name = ucfirst(trim(strrchr($file, DIRECTORY_SEPARATOR), DIRECTORY_SEPARATOR)) . '.php';
-                include $current_nx_root . DIRECTORY_SEPARATOR . strtolower(dirname($file)) . DIRECTORY_SEPARATOR . $name;
+                include $current_nx_root . DIRECTORY_SEPARATOR . dirname($filePath($file)) . DIRECTORY_SEPARATOR . $name;
             }
             if(!empty(CURRENT_AUTOLOAD_MAP)){
                 foreach (CURRENT_AUTOLOAD_MAP as $namespace => $paths){
@@ -61,7 +69,7 @@ class MVC
                         $file_path = str_replace($name.'.php',"",$file_path.".php");
                         $file_path = str_replace("\\",DIRECTORY_SEPARATOR,$file_path);
                         foreach ($paths as $path){
-                            $file = $current_nx_root.DIRECTORY_SEPARATOR.strtolower($path.DIRECTORY_SEPARATOR.$file_path).$name.'.php';
+                            $file = $current_nx_root.DIRECTORY_SEPARATOR.$filePath($path.DIRECTORY_SEPARATOR.$file_path).$name.'.php';
                             include $file;
                             break;
                         }

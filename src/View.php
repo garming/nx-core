@@ -21,7 +21,7 @@ class View
         $content = $this->render($file);
         if(empty(static::$layout)){
             $layout_path = CURRENT_APP_PATH .DIRECTORY_SEPARATOR.MVC::getViewPath();
-            $layout_path = dirname(dirname($layout_path));
+            $layout_path = dirname($layout_path);
             static::$layout = $layout_path.DIRECTORY_SEPARATOR.'_layout'.DIRECTORY_SEPARATOR.'layout.php';
         }
         if(file_exists(static::$layout)){

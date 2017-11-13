@@ -17,22 +17,25 @@ class Dispatch
     private function __clone(){}
     private function __construct(){}
 
-    public static function run(array $router = [],array $inspectors = [])
+    public static function run(array $router = [],array $inspectors = [],$server = null)
     {
         if(!empty($inspectors) && is_array($inspectors)){
             foreach ($inspectors as $inspector){
                 call_user_func($inspector);
             }
         }
-        if(isset($_SERVER['PATH_INFO'])){
-            $uri = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : '/';
-        }elseif(isset($_SERVER['REQUEST_URI'])){
-            $uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '/';
+        if(is_null($server)){
+          $server = $_SERVER;
+        }
+        if(isset($server['PATH_INFO'])){
+            $uri = isset($server['PATH_INFO']) ? $server['PATH_INFO'] : '/';
+        }elseif(isset($server['REQUEST_URI'])){
+            $uri = isset($server['REQUEST_URI']) ? $server['REQUEST_URI'] : '/';
             if(strpos($uri,'?') !== false){
                 $uri = mb_substr($uri,0,strpos($uri,'?'));
             }
         }
-        $requestMethod = strtoupper($_SERVER['REQUEST_METHOD']);
+        $requestMethod = strtoupper($server['REQUEST_METHOD']);
         $check_uri = $requestMethod."#".$uri;
         if(isset($router[$check_uri])){
             $router = $router[$check_uri];
@@ -81,7 +84,7 @@ class Dispatch
             }
         }
         $uri = explode("/",$uri);
-        self::$request_method = $_SERVER['REQUEST_METHOD'];
+        self::$request_method = $server['REQUEST_METHOD'];
         self::$controller = (isset($uri[1]) && !empty($uri[1])) ? $uri[1] : 'Index';
         self::$action     = (isset($uri[2]) && !empty($uri[2])) ? $uri[2] : 'index';
         $controller = '\\Controller\\'.self::$controller;

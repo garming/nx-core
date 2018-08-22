@@ -55,13 +55,13 @@ class Dispatch
                         $last_pos = strrpos($pattern,")");
                         $pattern = substr($pattern,1,$last_pos-1);
                         $pattern = "/{$pattern}/";
-                        if(preg_match($pattern, $tmp_uri) === 1){
+                        $matches = [];
+                        if(preg_match($pattern, $tmp_uri, $matches) === 1){
                             $class = $clazz['class'];
                             $action = $clazz['function'];
-                            call_user_func([(new $class),strtolower($action)]);
+                            call_user_func([(new $class),strtolower($action)], $matches[0]);
                             return;
                         }
-
                     }
                 }
                 if(strpos(strrev($path),"**/") === 0){

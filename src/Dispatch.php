@@ -48,37 +48,19 @@ class Dispatch
             foreach ($router as $path => $clazz){
                 $pos = strrpos($path,"/(");
                 if($pos !== false){
-                    $uri_begin = substr($path,0,$pos+1);
-                    if(strrpos($check_uri,$uri_begin) === 0){
-                        $pattern = str_replace($uri_begin,"",$path);
-                        $tmp_uri = str_replace($uri_begin,"",$check_uri);
-                        $last_pos = strrpos($pattern,")");
-                        $pattern = substr($pattern,1,$last_pos-1);
-                        $pattern = "/{$pattern}/";
-                        if(preg_match($pattern, $tmp_uri) === 1){
-                            $class = $clazz['class'];
-                            $action = $clazz['function'];
-                            call_user_func([(new $class),strtolower($action)]);
-                            return;
-                        }
-
-                    }
-                }
-                if(strpos(strrev($path),"**/") === 0){
-                    $uri_begin = rtrim($path,"**");
-                    if(strrpos($check_uri,$uri_begin) === 0){
-                        $pattern = str_replace($uri_begin,"",$path);
-                        $tmp_uri = str_replace($uri_begin,"",$check_uri);
-                        $last_pos = strrpos($pattern,")");
-                        $pattern = substr($pattern,1,$last_pos-1);
-                        $pattern = "/{$pattern}/";
-                        if(preg_match($pattern, $tmp_uri) === 1){
-                            $class = $clazz['class'];
-                            $action = $clazz['function'];
-                            call_user_func([(new $class),strtolower($action)]);
-                            return;
-                        }
-
+                    $path = '/^' . str_replace('/', '#', $path) . '$/';
+                    $check_uri = str_replace('/', '#', $check_uri);
+                    $matches = [];
+                    preg_match($path, $check_uri, $matches);
+                    if ($matches) {
+						array_shift($matches);
+                        $class = $clazz['class'];
+                        $action = $clazz['function'];
+                        call_user_func_array([
+                            (new $class),
+                            strtolower($action),
+                        ], $matches);
+                        return;
                     }
                 }
             }

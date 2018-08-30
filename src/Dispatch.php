@@ -53,7 +53,7 @@ class Dispatch
             }
         }
         $requestMethod = strtoupper($server['REQUEST_METHOD']);
-        $check_uri = $requestMethod."#".$uri;
+        $check_uri = rtrim($requestMethod."#".$uri,'/');
 
         self::$request_uri = $uri;
         self::$match_uri = $check_uri;

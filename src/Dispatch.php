@@ -29,9 +29,11 @@ class Dispatch
                 call_user_func($inspector);
             }
         }
-
-        call_user_func([(new self::$controller),strtolower(self::$action)],self::$params);
-
+        if(empty(self::$params)){
+            call_user_func([(new self::$controller),strtolower(self::$action)]);
+        }else{
+            call_user_func_array([(new self::$controller),strtolower(self::$action)],self::$params);
+        }
     }
 
     private static function uriHandler(array $router = [],$server = null)
